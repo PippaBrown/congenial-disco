@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Week 1 Timetable</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  @page { size: landscape; margin: 6mm; }
+
+  :root {
+    --bg: #15121e;
+    --ink: #f1edf8;
+    --ink-soft: #a79cc4;
+    --line: #2b2540;
+
+    --lecture: #c9a3ff;
+    --lecture-tint: #322350;
+
+    --tutorial: #4be8ac;
+    --tutorial-tint: #103a2b;
+
+    --explore: #ff8fb3;
+    --explore-tint: #40212f;
+
+    --other: #5fbaff;
+    --other-tint: #163a54;
+
+    --meeting: #ded8f7;
+    --meeting-tint: #2c273f;
+
+    --day-head-bg: #2a2440;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body { background: var(--bg); }
+
+  body {
+    margin: 0;
+    padding: 8px 10px calc(10px + env(safe-area-inset-bottom, 0px));
+    padding-top: calc(8px + env(safe-area-inset-top, 0px));
+    font-family: 'Inter', -apple-system, "Segoe UI", Arial, sans-serif;
+    color: var(--ink);
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 5px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .header h1 {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: -0.2px;
+    margin: 0;
+  }
+
+  .header .sub {
+    font-size: 7.5px;
+    color: var(--ink-soft);
+    font-weight: 500;
+    margin-top: 1px;
+  }
+
+  .legend {
+    display: flex;
+    gap: 6px;
+    font-size: 6.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    flex-wrap: wrap;
+  }
+
+  .legend span { display: flex; align-items: center; gap: 3px; }
+
+  .chip { width: 5.5px; height: 5.5px; border-radius: 2px; }
+  .chip.lecture { background: var(--lecture); }
+  .chip.tutorial { background: var(--tutorial); }
+  .chip.explore { border: 1.2px dashed var(--explore); background: transparent; }
+  .chip.other { background: var(--other); }
+  .chip.meeting { background: var(--meeting); }
+
+  .calendar {
+    display: grid;
+    grid-template-columns: 34px repeat(5, 1fr);
+    grid-template-rows: 18px repeat(52, 13px);
+    background-image: repeating-linear-gradient(
+      to bottom, var(--line) 0, var(--line) 1px, transparent 1px, transparent 52px
+    );
+    background-position: 0 18px;
+    background-repeat: repeat;
+  }
+
+  .day-head {
+    grid-row: 1 / 2;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 7.5px; font-weight: 700; color: var(--ink);
+    background: var(--day-head-bg); border-radius: 4px; margin: 0 1.5px;
+  }
+
+  .hour-label {
+    grid-column: 1 / 2; font-size: 5.5px; color: var(--ink-soft);
+    text-align: right; padding-right: 3px; transform: translateY(-4px); font-weight: 500;
+  }
+
+  .event { border-radius: 4px; padding: 2px 4px; margin: 0 1.5px; line-height: 1.05; overflow: visible; }
+
+  .event.lecture { background: var(--lecture-tint); border-left: 2px solid var(--lecture); }
+  .event.tutorial { background: var(--tutorial-tint); border-left: 2px solid var(--tutorial); }
+  .event.explore { background: var(--explore-tint); border-left: 2px dashed var(--explore); }
+  .event.other { background: var(--other-tint); border-left: 2px solid var(--other); }
+  .event.meeting { background: var(--meeting-tint); border-left: 2px solid var(--meeting); }
+
+  .event .time { font-size: 5.5px; font-weight: 700; opacity: 0.9; }
+  .event.lecture .time { color: var(--lecture); }
+  .event.tutorial .time { color: var(--tutorial); }
+  .event.explore .time { color: var(--explore); }
+  .event.other .time { color: var(--other); }
+  .event.meeting .time { color: var(--meeting); }
+
+  .event .title { font-size: 7px; font-weight: 700; line-height: 1.15; margin-top: 0.5px; color: var(--ink); }
+  .event .meta { font-size: 6px; color: var(--ink-soft); font-weight: 500; line-height: 1.15; }
+
+  .event .tag {
+    display: inline-block; font-size: 4.5px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.2px; margin-top: 0.5px; padding: 0.5px 3px; border-radius: 20px; color: #15121e;
+  }
+  .event.lecture .tag { background: var(--lecture); }
+  .event.tutorial .tag { background: var(--tutorial); }
+  .event.explore .tag { background: var(--explore); }
+  .event.meeting .tag { background: var(--meeting); }
+
+  .footer-note { margin-top: 5px; font-size: 6px; color: var(--ink-soft); text-align: center; }
+
+  @media print {
+    :root {
+      --bg: #ffffff; --ink: #241f2e; --ink-soft: #8a819a; --line: #ece8f3;
+      --lecture-tint: #f2ecfb; --tutorial-tint: #e9f9f2; --explore-tint: #fdedf2;
+      --other-tint: #eaf3fb; --meeting-tint: #f0eef5; --day-head-bg: #3d3752;
+    }
+    body { padding: 0; background: #fff; }
+    .event .tag { color: #ffffff; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>Week 1 — Pure Maths MSc</h1>
+    <div class="sub">Mon 28 Sept – Fri 2 Oct 2026</div>
+  </div>
+  <div class="legend">
+    <span><span class="chip lecture"></span>Lecture</span>
+    <span><span class="chip tutorial"></span>Tutorial</span>
+    <span><span class="chip explore"></span>Exploring</span>
+    <span><span class="chip meeting"></span>Meeting</span>
+    <span><span class="chip other"></span>Evening/social</span>
+  </div>
+</div>
+
+<div class="calendar">
+
+  <div class="day-head" style="grid-column: 2 / 3;">MON 28</div>
+  <div class="day-head" style="grid-column: 3 / 4;">TUE 29</div>
+  <div class="day-head" style="grid-column: 4 / 5;">WED 30</div>
+  <div class="day-head" style="grid-column: 5 / 6;">THU 1</div>
+  <div class="day-head" style="grid-column: 6 / 7;">FRI 2</div>
+
+  <div class="hour-label" style="grid-row: 2 / 3;">09:00</div>
+  <div class="hour-label" style="grid-row: 6 / 7;">10:00</div>
+  <div class="hour-label" style="grid-row: 10 / 11;">11:00</div>
+  <div class="hour-label" style="grid-row: 14 / 15;">12:00</div>
+  <div class="hour-label" style="grid-row: 18 / 19;">13:00</div>
+  <div class="hour-label" style="grid-row: 22 / 23;">14:00</div>
+  <div class="hour-label" style="grid-row: 26 / 27;">15:00</div>
+  <div class="hour-label" style="grid-row: 30 / 31;">16:00</div>
+  <div class="hour-label" style="grid-row: 34 / 35;">17:00</div>
+  <div class="hour-label" style="grid-row: 38 / 39;">18:00</div>
+  <div class="hour-label" style="grid-row: 42 / 43;">19:00</div>
+  <div class="hour-label" style="grid-row: 46 / 47;">20:00</div>
+  <div class="hour-label" style="grid-row: 50 / 51;">21:00</div>
+  <div class="hour-label" style="grid-row: 54 / 55;">22:00</div>
+
+  <div class="event explore" style="grid-column: 2 / 3; grid-row: 6 / 10;">
+    <div class="time">10–11</div><div class="title">Galois Theory</div>
+    <div class="meta">62121 · TBC</div><span class="tag">exploring</span>
+  </div>
+  <div class="event lecture" style="grid-column: 2 / 3; grid-row: 10 / 14;">
+    <div class="time">11–12</div><div class="title">Measure Th &amp; Ergodic Th</div>
+    <div class="meta">Williamson G.03 · 61021</div><span class="tag">lecture</span>
+  </div>
+  <div class="event lecture" style="grid-column: 2 / 3; grid-row: 26 / 30;">
+    <div class="time">15–16</div><div class="title">Category Theory</div>
+    <div class="meta">Alan Turing G.107 · 63031</div><span class="tag">lecture</span>
+  </div>
+  <div class="event explore" style="grid-column: 2 / 3; grid-row: 30 / 38;">
+    <div class="time">16–18</div><div class="title">Model Theory</div>
+    <div class="meta">63051 · TBC</div><span class="tag">exploring</span>
+  </div>
+  <div class="event other" style="grid-column: 2 / 3; grid-row: 46 / 54;">
+    <div class="time">20–22</div><div class="title">Hockey Trials</div>
+    <div class="meta">Armitage Pitches</div>
+  </div>
+
+  <div class="event lecture" style="grid-column: 3 / 4; grid-row: 10 / 14;">
+    <div class="time">11–12</div><div class="title">Category Theory</div>
+    <div class="meta">Alan Turing G.207 · 63031</div><span class="tag">lecture</span>
+  </div>
+  <div class="event lecture" style="grid-column: 3 / 4; grid-row: 14 / 18;">
+    <div class="time">12–13</div><div class="title">Representation Theory</div>
+    <div class="meta">Univ Place 3.214 · 62261</div><span class="tag">lecture</span>
+  </div>
+  <div class="event explore" style="grid-column: 3 / 4; grid-row: 22 / 26;">
+    <div class="time">14–15</div><div class="title">Diff. Manifolds</div>
+    <div class="meta">61061 · TBC</div><span class="tag">exploring</span>
+  </div>
+
+  <div class="event lecture" style="grid-column: 4 / 5; grid-row: 2 / 6;">
+    <div class="time">9–10</div><div class="title">Measure Th &amp; Ergodic Th</div>
+    <div class="meta">Booth St East G.03 · 61021</div><span class="tag">lecture</span>
+  </div>
+  <div class="event lecture" style="grid-column: 4 / 5; grid-row: 6 / 10;">
+    <div class="time">10–11</div><div class="title">Representation Theory</div>
+    <div class="meta">Alan Turing G.108 · 62261</div><span class="tag">lecture</span>
+  </div>
+  <div class="event explore" style="grid-column: 4 / 5; grid-row: 10 / 18;">
+    <div class="time">11–13</div><div class="title">Martingale Theory</div>
+    <div class="meta">67201 · TBC</div><span class="tag">exploring</span>
+  </div>
+  <div class="event meeting" style="grid-column: 4 / 5; grid-row: 24 / 26;">
+    <div class="time">14:30–15</div><div class="title">Advisor Meeting</div>
+    <div class="meta">Univ Place 3.205</div><span class="tag">meeting</span>
+  </div>
+  <div class="event other" style="grid-column: 4 / 5; grid-row: 45 / 52;">
+    <div class="time">19:45–21:30</div><div class="title">Wind Orchestra</div>
+    <div class="meta">Martin Harris Centre</div>
+  </div>
+
+  <div class="event lecture" style="grid-column: 5 / 6; grid-row: 2 / 10;">
+    <div class="time">9–11</div><div class="title">Research &amp; Project Skills</div>
+    <div class="meta">Univ Place 2.219 · 61000</div><span class="tag">lecture</span>
+  </div>
+  <div class="event tutorial" style="grid-column: 5 / 6; grid-row: 30 / 34;">
+    <div class="time">16–17</div><div class="title">Representation Theory</div>
+    <div class="meta">Univ Place 3.211 · 62261</div><span class="tag">tutorial</span>
+  </div>
+
+  <div class="event tutorial" style="grid-column: 6 / 7; grid-row: 2 / 6;">
+    <div class="time">9–10</div><div class="title">Category Theory</div>
+    <div class="meta">Alan Turing G.107 · 63031</div><span class="tag">tutorial</span>
+  </div>
+  <div class="event tutorial" style="grid-column: 6 / 7; grid-row: 14 / 18;">
+    <div class="time">12–13</div><div class="title">Measure Th &amp; Ergodic Th</div>
+    <div class="meta">Bridgeford St, Hanson Rm · 61021</div><span class="tag">tutorial</span>
+  </div>
+
+</div>
+
+<div class="footer-note">Purple = lecture · Green = tutorial · Pink dashed = exploring · Grey = meeting · Blue = evening/social</div>
+
+</body>
+</html>
